@@ -3,7 +3,7 @@ import multiprocessing
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 from schemas.pharmacy import Pharmacy
 from schemas.claim import Claim
@@ -129,7 +129,8 @@ class PharmacySystem:
                     "fills": len(claims_for_npi_ndc),
                     "reverted": len(reverts_for_npi_ndc),
                     "avg_price": avg_unit_price,
-                    "total_price": sum(claim.price for claim in claims_for_npi_ndc)
+                    "total_price": sum(claim.price for claim in claims_for_npi_ndc),
+                    "total_quantity": sum(claim.quantity for claim in claims_for_npi_ndc)
                 })
 
         return metrics
@@ -165,3 +166,21 @@ class PharmacySystem:
             recommendations.append({"ndc": ndc, "chain": top_chains})
 
         return recommendations
+
+    def find_most_common_quantities(self, metrics: list[dict]) -> list[dict]:
+        """
+        Finds the most common quantities for each drug (NDC)
+        using pre-calculated metrics with total_quantity.
+        """
+
+        ndc_quantities = defaultdict(list)
+        for metric in metrics:
+            ndc = metric['ndc']
+            total_quantity = metric['total_quantity']
+            ndc_quantities[ndc].append(total_quantity)
+
+        result = []
+        for ndc, quantities in ndc_quantities.items():
+            most_common_quantities = [q for q, c in Counter(quantities).most_common(5)]
+            result.append({"ndc": ndc, "most_prescribed_quantity": most_common_quantities})
+        return result

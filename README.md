@@ -9,14 +9,16 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
 * Handles multiple input files for each data type.
 * Utilizes multiprocessing for efficient parallel processing.
 * Calculates metrics such as:
-    * Count of claims and reverts
-    * Average and total unit price
-    * Distribution of drugs (NDCs)
-* Generates reports on:
+    * Count of claims
+    * Count of reverts
+    * Average unit price
+    * Total price
+* Make a recommendation for the top 2 Chain to be displayed for each Drug
     * Active claims for each pharmacy
     * Total revenue for each pharmacy
     * Drug distribution for each pharmacy
 * Recommends top 2 chains with the lowest average unit price per drug.
+* Understand Most common quantity prescribed for a given Drug
 * Outputs metrics and recommendations in JSON format.
 * Includes comprehensive logging for tracking and debugging.
 
@@ -27,6 +29,7 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
     │   ├── claims/
     │   └── reverts/
     ├── logs/               # Directory for log files
+    |── outputs/            # Directory for output files
     ├── schemas/
     │   ├── init.py
     │   ├── pharmacy.py

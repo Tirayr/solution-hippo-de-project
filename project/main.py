@@ -142,13 +142,16 @@ def main():
             recommendations = system.recommend_top_chains_per_drug(metrics, 2)
             system.save_metrics_to_json(recommendations, recommendations_output_file)
 
+            # Generate most common quantities using calculated metrics and save to JSON
+            quantities_output_file = "outputs/most_common_quantities.json"
+            most_common_quantities = system.find_most_common_quantities(metrics)
+            system.save_metrics_to_json(most_common_quantities, quantities_output_file)
 
         except Exception as e:
             logger.error(f"An error occurred during processing: {str(e)}")
             raise
 
     logger.info("Processing completed successfully")
-
 
 
 if __name__ == "__main__":
