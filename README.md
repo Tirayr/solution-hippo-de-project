@@ -21,26 +21,26 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
 * Includes comprehensive logging for tracking and debugging.
 
 ## Project Structure
-project/
-├── data/               # Directory for input files
-│   ├── pharmacies/
-│   ├── claims/
-│   └── reverts/
-├── logs/               # Directory for log files
-├── schemas/
-│   ├── init.py
-│   ├── pharmacy.py
-│   ├── claim.py
-│   └── revert.py
-├── parsers/
-│   ├── init.py
-│   └── data_parser.py
-├── utils/
-│   ├── init.py
-│   ├── logger.py
-│   └── file_reader.py
-├── pharmacy_system.py
-└── main.py
+    project/
+    ├── data/               # Directory for input files
+    │   ├── pharmacies/
+    │   ├── claims/
+    │   └── reverts/
+    ├── logs/               # Directory for log files
+    ├── schemas/
+    │   ├── init.py
+    │   ├── pharmacy.py
+    │   ├── claim.py
+    │   └── revert.py
+    ├── parsers/
+    │   ├── init.py
+    │   └── data_parser.py
+    ├── utils/
+    │   ├── init.py
+    │   ├── logger.py
+    │   └── file_reader.py
+    ├── pharmacy_system.py
+    └── main.py
 
 ## Usage
 
