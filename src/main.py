@@ -1,8 +1,9 @@
 import argparse
 from pathlib import Path
+import multiprocessing
+from configs import config
 from pharmacy_system import PharmacySystem
 from utils.logger import setup_logger, with_logging
-import multiprocessing
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -133,18 +134,18 @@ def main():
             logger.info("Generating pharmacy statistics...")
 
             # Calculate metrics and save to JSON
-            metrics_output_file = "outputs/metrics.json"
+            metrics_output_file = config.METRICS_OUTPUT_FILE
             metrics = system.calculate_metrics()
             system.save_metrics_to_json(metrics, metrics_output_file)
 
             # Generate chain recommendations using calculated metrics and save to JSON
-            recommendations_output_file = "outputs/chain_recommendations.json"
-            recommendations = system.recommend_top_chains_per_drug(metrics, 2)
+            recommendations_output_file = config.CHAIN_RECOMMENDATIONS_OUTPUT_FILE
+            recommendations = system.recommend_top_chains_per_drug(metrics, config.TOP_N_CHAINS)
             system.save_metrics_to_json(recommendations, recommendations_output_file)
 
             # Generate most common quantities using calculated metrics and save to JSON
-            quantities_output_file = "outputs/most_common_quantities.json"
-            most_common_quantities = system.find_most_common_quantities(metrics)
+            quantities_output_file = config.MOST_COMMON_QUANTITIES_OUTPUT_FILE
+            most_common_quantities = system.find_most_common_quantities(metrics, config.MOST_COMMON_QUANTITIES_LIMIT)
             system.save_metrics_to_json(most_common_quantities, quantities_output_file)
 
         except Exception as e:

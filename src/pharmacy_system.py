@@ -167,7 +167,7 @@ class PharmacySystem:
 
         return recommendations
 
-    def find_most_common_quantities(self, metrics: list[dict]) -> list[dict]:
+    def find_most_common_quantities(self, metrics: list[dict], most_common_quantity_limit: int) -> list[dict]:
         """
         Finds the most common quantities for each drug (NDC)
         using pre-calculated metrics with total_quantity.
@@ -181,6 +181,6 @@ class PharmacySystem:
 
         result = []
         for ndc, quantities in ndc_quantities.items():
-            most_common_quantities = [q for q, c in Counter(quantities).most_common(5)]
+            most_common_quantities = [q for q, c in Counter(quantities).most_common(most_common_quantity_limit)]
             result.append({"ndc": ndc, "most_prescribed_quantity": most_common_quantities})
         return result
