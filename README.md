@@ -23,27 +23,28 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
 * Includes comprehensive logging for tracking and debugging.
 
 ## Project Structure
-    project/
+
     ├── data/               # Directory for input files
     │   ├── pharmacies/
     │   ├── claims/
     │   └── reverts/
     ├── logs/               # Directory for log files
     |── outputs/            # Directory for output files
-    ├── schemas/
-    │   ├── init.py
-    │   ├── pharmacy.py
-    │   ├── claim.py
-    │   └── revert.py
-    ├── parsers/
-    │   ├── init.py
-    │   └── data_parser.py
-    ├── utils/
-    │   ├── init.py
-    │   ├── logger.py
-    │   └── file_reader.py
-    ├── pharmacy_system.py
-    └── main.py
+    |── src/
+            ├── schemas/
+            │   ├── init.py
+            │   ├── pharmacy.py
+            │   ├── claim.py
+            │   └── revert.py
+            ├── parsers/
+            │   ├── init.py
+            │   └── data_parser.py
+            ├── utils/
+            │   ├── init.py
+            │   ├── logger.py
+            │   └── file_reader.py
+            ├── pharmacy_system.py
+            └── main.py
 
 ## Usage
 
@@ -55,7 +56,7 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
     * Place the input files in the respective directories under `data/`.
 3.  **Run the script:**
     ```bash
-    python main.py \
+    python src/main.py \
         -p data/pharmacies/pharmacies1.csv,data/pharmacies/pharmacies2.csv \
         -c data/claims/claims1.json,data/claims/claims2.json \
         -r data/reverts/reverts1.json,data/reverts/reverts2.json \
