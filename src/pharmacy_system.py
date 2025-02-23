@@ -130,7 +130,11 @@ class PharmacySystem:
                 ]
                 # Calculate the average unit price for the current (npi, ndc) pair
                 avg_unit_price = (
-                    sum(claim.price / claim.quantity for claim in claims_for_npi_ndc)
+                    sum(
+                        claim.price / claim.quantity
+                        for claim in claims_for_npi_ndc
+                        if claim.quantity > 0
+                    )
                     / len(claims_for_npi_ndc)
                     if claims_for_npi_ndc
                     else 0

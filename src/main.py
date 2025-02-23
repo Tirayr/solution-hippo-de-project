@@ -9,42 +9,36 @@ from utils.logger import setup_logger, with_logging
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Process pharmacy, claims, and reverts from text files.",
+        description="Process pharmacy, claims, and reverts from directories of files.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
         Example usage:
-          python main.py -p pharmacies1.txt pharmacies2.txt -c claims1.txt,claims2.txt -r reverts1.txt,reverts2.txt
-          python main.py --pharmacy-file data/pharmacies1.txt,data/pharmacies2.txt 
-                         --claims-file data/claims1.txt,data/claims2.txt
-                         --reverts-file data/reverts1.txt,data/reverts2.txt
+          python main.py -p data/pharmacies data/claims -c data/claims -r data/reverts
         """,
     )
 
     parser.add_argument(
         "-p",
-        "--pharmacy-files",
-        nargs="+",  # Accept one or more file paths
+        "--pharmacy-dir",
         type=str,
         required=True,
-        help="Path(s) to the pharmacy data file(s)",
+        help="Path to the directory containing pharmacy data files",
     )
 
     parser.add_argument(
         "-c",
-        "--claims-files",
-        nargs="+",  # Accept one or more file paths
+        "--claims-dir",
         type=str,
         required=True,
-        help="Path(s) to the claims data file(s)",
+        help="Path to the directory containing claims data files",
     )
 
     parser.add_argument(
         "-r",
-        "--reverts-files",
-        nargs="+",  # Accept one or more file paths
+        "--reverts-dir",
         type=str,
         required=True,
-        help="Path(s) to the reverts data file(s)",
+        help="Path to the directory containing reverts data files",
     )
 
     parser.add_argument(
@@ -54,22 +48,11 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
 
     args = parser.parse_args()
-    args.pharmacy_files = args.pharmacy_files[0].split(",")
-    args.claims_files = args.claims_files[0].split(",")
-    args.reverts_files = args.reverts_files[0].split(",")
 
-    # Validate file paths
-    for file_paths in [args.pharmacy_files, args.claims_files, args.reverts_files]:
-        for file_path in file_paths:
-            if not Path(file_path).is_file():
-                parser.error(f"File not found: {file_path}")
-
-    # Validate/create log directory
-    log_dir = Path(args.log_dir)
-    try:
-        log_dir.mkdir(exist_ok=True)
-    except Exception as e:
-        parser.error(f"Cannot create log directory {args.log_dir}: {str(e)}")
+    # Validate directory paths
+    for dir_path in [args.pharmacy_dir, args.claims_dir, args.reverts_dir]:
+        if not Path(dir_path).is_dir():
+            parser.error(f"Directory not found: {dir_path}")
 
     return args
 
@@ -121,28 +104,25 @@ def main():
         system.claims = shared_claims
         system.active_claims = shared_active_claims
         system.reverts = shared_reverts
+
+        # Setting up the list of files to be processed
+        pharmacy_files = [str(file) for file in Path(args.pharmacy_dir).glob("*") if file.is_file()]
+        claims_files = [str(file) for file in Path(args.claims_dir).glob("*") if file.is_file()]
+        reverts_files = [str(file) for file in Path(args.reverts_dir).glob("*") if file.is_file()]
+
         try:
             with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
                 pool.starmap(
                     process_pharmacy_file,
-                    [
-                        (system, file_path, log_file, args.verbose)
-                        for file_path in args.pharmacy_files
-                    ],
+                    [(system, file_path, log_file, args.verbose) for file_path in pharmacy_files],
                 )
                 pool.starmap(
                     process_claims_file,
-                    [
-                        (system, file_path, log_file, args.verbose)
-                        for file_path in args.claims_files
-                    ],
+                    [(system, file_path, log_file, args.verbose) for file_path in claims_files],
                 )
                 pool.starmap(
                     process_reverts_file,
-                    [
-                        (system, file_path, log_file, args.verbose)
-                        for file_path in args.reverts_files
-                    ],
+                    [(system, file_path, log_file, args.verbose) for file_path in reverts_files],
                 )
 
             # Generate reports (this part needs to be adjusted as well)
