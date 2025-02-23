@@ -56,16 +56,11 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
     * Place the input files in the respective directories under `data/`.
 3.  **Run the script:**
     ```bash
-    python src/main.py \
-        -p data/pharmacies/pharmacies1.csv,data/pharmacies/pharmacies2.csv \
-        -c data/claims/claims1.json,data/claims/claims2.json \
-        -r data/reverts/reverts1.json,data/reverts/reverts2.json \
-        -l logs/ \
-        -v
+    python src/main.py -p data/pharmacies -c data/claims -r data/reverts -l logs/ -v
     ```
-    * `-p`, `--pharmacy-file`: Comma-separated list of paths to pharmacy data files.
-    * `-c`, `--claims-file`: Comma-separated list of paths to claims data files.
-    * `-r`, `--reverts-file`: Comma-separated list of paths to reverts data files.
+    * `-p`, `--pharmacy-dir`: Directory with pharmacy data files.
+    * `-c`, `--claims-dir`: Directory with claims data files.
+    * `-r`, `--reverts-dir`: Directory with reverts data files.
     * `-l`, `--log-dir`: Directory for log files (default: `logs`).
     * `-v`, `--verbose`: Enable verbose logging.
 
@@ -73,4 +68,5 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
 
 * `metrics.json`: Contains calculated metrics for NPIs and NDCs.
 * `chain_recommendations.json`: Contains recommendations for top 2 chains per drug.
+* `most_common_quantities.json`: Contains most common quanities for a drug
 * Log files: Daily log files are created in the specified log directory.
