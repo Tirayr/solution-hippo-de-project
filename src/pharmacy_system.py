@@ -25,10 +25,10 @@ class PharmacySystem:
     def load_pharmacies_from_file(self, file_path: str) -> None:
         """Load pharmacy data from file into the system."""
         try:
-            data = self.file_reader.read_csv_file(file_path)  # Use read_csv_file
+            data = self.file_reader.read_csv_file(file_path)
             self.logger.info(f"Loading pharmacy data from {file_path}")
             for pharmacy in self.parser.parse_pharmacies(data):
-                self.pharmacies[pharmacy.npi] = pharmacy  # Use npi as key
+                self.pharmacies[pharmacy.npi] = pharmacy
             self.logger.info(f"Successfully loaded {len(self.pharmacies)} pharmacies")
         except Exception as e:
             self.logger.error(f"Failed to load pharmacy data: {str(e)}")
@@ -129,16 +129,11 @@ class PharmacySystem:
                     and self.claims[revert.claim_id].ndc == ndc
                 ]
                 # Calculate the average unit price for the current (npi, ndc) pair
-                avg_unit_price = (
-                    sum(
-                        claim.price / claim.quantity
-                        for claim in claims_for_npi_ndc
-                        if claim.quantity > 0
-                    )
-                    / len(claims_for_npi_ndc)
-                    if claims_for_npi_ndc
-                    else 0
-                )
+                avg_unit_price = sum(
+                    claim.price / claim.quantity
+                    for claim in claims_for_npi_ndc
+                    if claim.quantity > 0
+                ) / sum(1 for claim in claims_for_npi_ndc if claim.quantity > 0)
 
                 metrics.append(
                     {
@@ -186,8 +181,9 @@ class PharmacySystem:
 
         return recommendations
 
+    @staticmethod
     def find_most_common_quantities(
-        self, metrics: list[dict], most_common_quantity_limit: int
+        metrics: list[dict], most_common_quantity_limit: int
     ) -> list[dict]:
         """
         Finds the most common quantities for each drug (NDC)
