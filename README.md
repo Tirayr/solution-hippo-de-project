@@ -70,3 +70,12 @@ This Python-based system processes pharmacy claims, reverts, and generates repor
 * `chain_recommendations.json`: Contains recommendations for top 2 chains per drug.
 * `most_common_quantities.json`: Contains most common quanities for a drug
 * Log files: Daily log files are created in the specified log directory.
+
+## Next steps include:
+
+* Further performance optimization, potentially using PySpark for distributed computing.
+* Implementing additional data validation and error handling.
+* Exploring alternative reporting formats (e.g., HTML, CSV).
+* Implementation of data storages like S3,GCS for output files, logs 
+* Data validation mechanisms for better handling source data issues with proper normalization
+
