@@ -9,7 +9,9 @@ class DataParser:
     def __init__(self, logger: logging.Logger):
         self.logger = logger
 
-    def parse_pharmacies(self, data: Generator[List[str], None, None]) -> Generator[Pharmacy, None, None]:
+    def parse_pharmacies(
+        self, data: Generator[List[str], None, None]
+    ) -> Generator[Pharmacy, None, None]:
         """Parse pharmacy data from a list of lists and yield Pharmacy objects."""
         for pharmacy_data in data:
             try:

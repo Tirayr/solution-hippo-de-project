@@ -54,7 +54,9 @@ class PharmacySystem:
                         self.logger.error(f"Error parsing claim data: {e}. Data: {claim_data}")
                         continue
                     if claim.npi not in self.pharmacies.keys():
-                        self.logger.warning(f"Pharmacy with NPI {claim.npi} not found. Skipping claim {claim.id}")
+                        self.logger.warning(
+                            f"Pharmacy with NPI {claim.npi} not found. Skipping claim {claim.id}"
+                        )
                         skipped_count += 1
                         continue
 
@@ -87,7 +89,9 @@ class PharmacySystem:
                     self.active_claims.pop(revert.claim_id, None)
                     processed_count += 1
 
-            self.logger.info(f"Processed {processed_count} reverts, skipped {skipped_count} reverts")
+            self.logger.info(
+                f"Processed {processed_count} reverts, skipped {skipped_count} reverts"
+            )
         except Exception as e:
             self.logger.error(f"Failed to process reverts: {str(e)}")
             raise
@@ -114,31 +118,42 @@ class PharmacySystem:
         metrics = []
         for npi in self.pharmacies:
             for ndc in set(claim.ndc for claim in self.claims.values() if claim.npi == npi):
-                claims_for_npi_ndc = [claim for claim in self.claims.values() if claim.npi == npi and claim.ndc == ndc]
+                claims_for_npi_ndc = [
+                    claim for claim in self.claims.values() if claim.npi == npi and claim.ndc == ndc
+                ]
                 reverts_for_npi_ndc = [
-                    revert for revert in self.reverts.values()
-                    if self.claims.get(revert.claim_id) and self.claims[revert.claim_id].npi == npi and self.claims[revert.claim_id].ndc == ndc
+                    revert
+                    for revert in self.reverts.values()
+                    if self.claims.get(revert.claim_id)
+                    and self.claims[revert.claim_id].npi == npi
+                    and self.claims[revert.claim_id].ndc == ndc
                 ]
                 # Calculate the average unit price for the current (npi, ndc) pair
-                avg_unit_price = sum(claim.price / claim.quantity for claim in claims_for_npi_ndc) / len(
-                    claims_for_npi_ndc) if claims_for_npi_ndc else 0
+                avg_unit_price = (
+                    sum(claim.price / claim.quantity for claim in claims_for_npi_ndc)
+                    / len(claims_for_npi_ndc)
+                    if claims_for_npi_ndc
+                    else 0
+                )
 
-                metrics.append({
-                    "npi": npi,
-                    "ndc": ndc,
-                    "fills": len(claims_for_npi_ndc),
-                    "reverted": len(reverts_for_npi_ndc),
-                    "avg_price": avg_unit_price,
-                    "total_price": sum(claim.price for claim in claims_for_npi_ndc),
-                    "total_quantity": sum(claim.quantity for claim in claims_for_npi_ndc)
-                })
+                metrics.append(
+                    {
+                        "npi": npi,
+                        "ndc": ndc,
+                        "fills": len(claims_for_npi_ndc),
+                        "reverted": len(reverts_for_npi_ndc),
+                        "avg_price": avg_unit_price,
+                        "total_price": sum(claim.price for claim in claims_for_npi_ndc),
+                        "total_quantity": sum(claim.quantity for claim in claims_for_npi_ndc),
+                    }
+                )
 
         return metrics
 
     def save_metrics_to_json(self, json_data, output_file: str) -> None:
         """Save the calculated metrics to a JSON file."""
         try:
-            with open(output_file, 'w') as f:
+            with open(output_file, "w") as f:
                 json.dump(json_data, f, indent=4)  # Directly dump the list of metrics
             self.logger.info(f"Metrics saved to {output_file}")
         except Exception as e:
@@ -154,10 +169,10 @@ class PharmacySystem:
         # Aggregate metrics by NDC and chain
         ndc_chain_avg_prices = defaultdict(list)
         for metric in metrics:
-            ndc = metric['ndc']
-            npi = metric['npi']
+            ndc = metric["ndc"]
+            npi = metric["npi"]
             chain = self.pharmacies[npi].chain
-            ndc_chain_avg_prices[ndc].append({"name": chain, "avg_price": metric['avg_price']})
+            ndc_chain_avg_prices[ndc].append({"name": chain, "avg_price": metric["avg_price"]})
 
         # Create recommendations
         recommendations = []
@@ -167,7 +182,9 @@ class PharmacySystem:
 
         return recommendations
 
-    def find_most_common_quantities(self, metrics: list[dict], most_common_quantity_limit: int) -> list[dict]:
+    def find_most_common_quantities(
+        self, metrics: list[dict], most_common_quantity_limit: int
+    ) -> list[dict]:
         """
         Finds the most common quantities for each drug (NDC)
         using pre-calculated metrics with total_quantity.
@@ -175,12 +192,14 @@ class PharmacySystem:
 
         ndc_quantities = defaultdict(list)
         for metric in metrics:
-            ndc = metric['ndc']
-            total_quantity = metric['total_quantity']
+            ndc = metric["ndc"]
+            total_quantity = metric["total_quantity"]
             ndc_quantities[ndc].append(total_quantity)
 
         result = []
         for ndc, quantities in ndc_quantities.items():
-            most_common_quantities = [q for q, c in Counter(quantities).most_common(most_common_quantity_limit)]
+            most_common_quantities = [
+                q for q, c in Counter(quantities).most_common(most_common_quantity_limit)
+            ]
             result.append({"ndc": ndc, "most_prescribed_quantity": most_common_quantities})
         return result
